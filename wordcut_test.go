@@ -21,8 +21,10 @@ func TestMixEnglishThaiCut(t *testing.T) {
 }
 
 func BenchmarkWordcut(b *testing.B) {
-	segmenter := Wordcut()
-	segmenter.LoadDefaultDict()
-	dat, _ := ioutil.ReadFile("./dict/benchmark_text.txt")
-	segmenter.Segment(string(dat))
+	for i := 0; i < b.N; i++ {
+		segmenter := Wordcut()
+		segmenter.LoadDefaultDict()
+		dat, _ := ioutil.ReadFile("./dict/benchmark_text.txt")
+		segmenter.Segment(string(dat))
+	}
 }
