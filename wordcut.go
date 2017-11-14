@@ -5,6 +5,8 @@ import (
 	"os"
 	"bufio"
 	"regexp"
+	"runtime"
+	"path"
 )
 
 
@@ -91,7 +93,8 @@ func Wordcut(options ...Option) *Segmenter {
 }
 
 func (w *Segmenter) LoadDefaultDict() {
-	w.loadFileIntoTrie("./dict/lexitron.txt")
+	_, filename, _, _ := runtime.Caller(0)
+	w.loadFileIntoTrie(path.Dir(filename) + "/dict/lexitron.txt")
 }
 
 /*
