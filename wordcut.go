@@ -1,7 +1,7 @@
 package gothaiwordcut
 
 import (
-	"github.com/tchap/go-patricia/patricia"
+	"github.com/armon/go-radix"
 	"os"
 	"bufio"
 	"regexp"
@@ -11,13 +11,12 @@ import (
 
 
 type Segmenter struct {
-	Trie *patricia.Trie
+	Tree *radix.Tree
 
 	minLength int
 }
 
 type Option func(*Segmenter)
-
 
 func (w *Segmenter) loadFileIntoTrie(filePath string) {
 	f, err := os.Open(filePath)
@@ -26,7 +25,7 @@ func (w *Segmenter) loadFileIntoTrie(filePath string) {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		w.Trie.Insert(patricia.Prefix(scanner.Text()), 1)
+		w.Tree.Insert(scanner.Text(), 1)
 	}
 
 	check(scanner.Err())
@@ -63,15 +62,8 @@ func (w *Segmenter) searchTrie(s string) string {
 		return numberResult
 	}
 
-	var longestWord string
-
 	// loop word character, trying to find longest word
-	for i := len(s); i > 0; i-- {
-		if w.Trie.Match(patricia.Prefix(s[0:i])) {
-			longestWord = s[0:i]
-			break
-		}
-	}
+	longestWord, _, _ := w.Tree.LongestPrefix(s)
 
 	return longestWord
 }
@@ -88,7 +80,7 @@ func (w *Segmenter) Segment(txt string) []string {
 
 func Wordcut(options ...Option) *Segmenter {
 	segmenter := &Segmenter{}
-	segmenter.Trie = patricia.NewTrie()
+	segmenter.Tree = radix.New()
 	return segmenter
 }
 
