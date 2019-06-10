@@ -9,13 +9,14 @@ import (
 	"path"
 )
 
-
+// Segmenter : Segmenter main class
 type Segmenter struct {
 	Tree *radix.Tree
 
 	minLength int
 }
 
+// Option : Option for Segmenter
 type Option func(*Segmenter)
 
 func (w *Segmenter) loadFileIntoTrie(filePath string) {
@@ -78,12 +79,14 @@ func (w *Segmenter) Segment(txt string) []string {
 	return w.findSegment(txt)
 }
 
+// Wordcut : main wordcut function
 func Wordcut(options ...Option) *Segmenter {
 	segmenter := &Segmenter{}
 	segmenter.Tree = radix.New()
 	return segmenter
 }
 
+// LoadDefaultDict : load dictionary into trie
 func (w *Segmenter) LoadDefaultDict() {
 	_, filename, _, _ := runtime.Caller(0)
 	w.loadFileIntoTrie(path.Dir(filename) + "/dict/lexitron.txt")
